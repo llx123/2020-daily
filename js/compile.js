@@ -5,6 +5,7 @@ class Compile {
     if (this.$el) {
       this.$fragment = this.node2Fragment(this.$el);
       this.compile(this.$fragment);
+      this.$el.appendChild(this.$fragment);
     }
   }
   isElementNode(node) {
@@ -27,7 +28,7 @@ class Compile {
         this.compileElement(node);
         this.compile(node);
       } else {
-        this.compileText();
+        this.compileText(node);
       }
     })
   }
@@ -36,23 +37,37 @@ class Compile {
     Array.from(attrs).forEach(attr => {
       let attrName = attr.name;
       if (this.isDirective(attrName)) {
-
+        let exp = attr.value;
+        let dir = attrName.substring(2);
+        CompileUtil[dir](node, this.$vm, exp);
       }
     })
   }
   compileText(node) {
-    let text = node.textContent;
+    let exp = node.textContent;
     let reg = /\{\{(.*)\}\}/g;
-    if (reg.text(text)) {
-
+    if (reg.test(exp)) {
+      CompileUtil['text'](node, this.$vm, exp);
     }
   }
 }
 
 // 指令处理集合
 CompileUtil = {
-  text() { },
-  model() { },
+  getVal(vm, exp) {
+    exp = exp.split('.');
+    return exp.reduce((prev, next) => {
+      return prev[next];
+    }, vm.$data);
+  },
+  text(node, vm, exp) {
+    let updateFn = this.updater['textUpdater'];
+    updateFn && updateFn(node)
+  },
+  model(node, vm, exp) {
+    let updateFn = this.updater['modelUpdater'];
+    updateFn && updateFn(node, this.getVal(vm, exp));
+  },
   updater: {
     textUpdater(node, value) {
       node.textContent = value;
