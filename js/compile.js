@@ -77,16 +77,16 @@ CompileUtil = {
     let updateFn = this.updater['textUpdater'];
     let value = this.getTextVal(vm, exp);
     exp.replace(/\{\{(.*)\}\}/g, (...arg) => {
-      new Watcher(vm, arg[1], () => {
-        updateFn && updateFn(node, this.getTextVal(vm, exp));
+      new Watcher(vm, arg[1], (newVal) => {
+        updateFn && updateFn(node, newVal);
       });
     });
     updateFn && updateFn(node, value);
   },
   model(node, vm, exp) {
     let updateFn = this.updater['modelUpdater'];
-    new Watcher(vm, exp, () => {
-      updateFn && updateFn(node, this.getVal(vm, exp));
+    new Watcher(vm, exp, (newVal) => {
+      updateFn && updateFn(node, newVal);
     });
     node.addEventListener('input', (e) => {
       let val = e.target.value;
