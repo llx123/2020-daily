@@ -11,15 +11,21 @@
 <body>
   <div id="app">
     <input type="text" v-model="message">
-    <div>111</div>
+    <div>{{message}}</div>
+    <div>hello: {{person.name}}</div>
   </div>
+  <script src="./js/watcher.js"></script>
+  <script src="./js/observer.js"></script>
   <script src="./js/compile.js"></script>
   <script src="./js/mvvm.js"></script>
   <script>
-    new MVVM({
+    var vm = new MVVM({
       el: "#app",
       data: {
-        message: 'hello world'
+        message: 'hello world',
+        person: {
+          name: 'llx123'
+        }
       }
     })
   </script>
