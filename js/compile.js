@@ -60,12 +60,41 @@ CompileUtil = {
       return prev[next];
     }, vm.$data);
   },
+  getTextVal(vm, exp) {
+    return exp.replace(/\{\{(.*)\}\}/g, (...arg) => {
+      return this.getVal(vm, arg[1]);
+    });
+  },
+  setVal(vm, exp, value) {
+    exp = exp.split('.');
+    return exp.reduce((prev, next, currentIndex) => {
+      if (currentIndex === exp.length - 1) {
+        return prev[next] = value;
+      }
+    }, vm.$data);
+  },
   text(node, vm, exp) {
     let updateFn = this.updater['textUpdater'];
-    updateFn && updateFn(node)
+    let value = this.getTextVal(vm, exp);
+    exp.replace(/\{\{(.*)\}\}/g, (...arg) => {
+      new Watcher(vm, arg[1], () => {
+        updateFn && updateFn(node, this.getTextVal(vm, exp));
+      });
+    });
+    updateFn && updateFn(node, value);
   },
   model(node, vm, exp) {
     let updateFn = this.updater['modelUpdater'];
+    new Watcher(vm, exp, () => {
+      updateFn && updateFn(node, this.getVal(vm, exp));
+    });
+    node.addEventListener('input', (e) => {
+      let val = e.target.value;
+      if (val === this.getVal(vm, exp)) {
+        return;
+      }
+      this.setVal(vm, exp, val);
+    })
     updateFn && updateFn(node, this.getVal(vm, exp));
   },
   updater: {
