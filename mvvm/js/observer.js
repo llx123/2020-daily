@@ -32,7 +32,8 @@ class Observer {
     })
   }
 }
-
+// Observer->Dep通知变化
+// Dep->Watcher通知变化 Watcher->Dep添加订阅者
 class Dep {
   constructor() {
     this.subs = [];

@@ -15,7 +15,8 @@ class Compile {
     return name.includes('v-');
   }
   node2Fragment(el) {
-    let fragment = document.createDocumentFragment(), child;
+    let fragment = document.createDocumentFragment(),
+      child;
     while (child = el.firstChild) {
       fragment.appendChild(child);
     }
@@ -77,6 +78,7 @@ CompileUtil = {
     let updateFn = this.updater['textUpdater'];
     let value = this.getTextVal(vm, exp);
     exp.replace(/\{\{(.*)\}\}/g, (...arg) => {
+      // 添加属性订阅、绑定更新函数
       new Watcher(vm, arg[1], (newVal) => {
         updateFn && updateFn(node, newVal);
       });
@@ -85,6 +87,7 @@ CompileUtil = {
   },
   model(node, vm, exp) {
     let updateFn = this.updater['modelUpdater'];
+    // 添加属性订阅、绑定更新函数
     new Watcher(vm, exp, (newVal) => {
       updateFn && updateFn(node, newVal);
     });
