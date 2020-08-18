@@ -42,7 +42,7 @@ class MyPromise {
     } else if (!newPromise) {
       const obj = new MyPromise();
       return Object.assign(obj, {
-        state: _this.states.RESOLVE,
+        state: _this.states.REJECT,
         value
       })
     }
