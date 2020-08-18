@@ -36,7 +36,7 @@ class MyPromise {
     const _this = MyPromise._this;
     const newPromise = _this instanceof MyPromise;
     if (newPromise && _this.state === _this.states.PENDING) {
-      _this.state = _this.states.RESOLVE;
+      _this.state = _this.states.REJECT;
       _this.value = value;
       _this.rejectCallBacks.map(cb => _this.value = cb(_this.value))
     } else if (!newPromise) {
