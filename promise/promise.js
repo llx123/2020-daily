@@ -25,11 +25,10 @@ class MyPromise {
       _this.value = value;
       _this.resolveCallBacks.map(cb => _this.value = cb(_this.value));
     } else if (!newPromise) {
-      const obj = new MyPromise();
-      return Object.assign(obj, {
-        state: _this.states.resolve,
-        value
-      })
+      return new MyPromise((r)=>{
+        r(value);
+        MyPromise._this = null;
+      });
     }
   }
   static reject(value) {
@@ -40,11 +39,10 @@ class MyPromise {
       _this.value = value;
       _this.rejectCallBacks.map(cb => _this.value = cb(_this.value))
     } else if (!newPromise) {
-      const obj = new MyPromise();
-      return Object.assign(obj, {
-        state: _this.states.REJECT,
-        value
-      })
+      return new MyPromise((r,j)=>{
+        j(value);
+        MyPromise._this = null;
+      });
     }
   }
   then(fullfillCb, rejectCb) {
